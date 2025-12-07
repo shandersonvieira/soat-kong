@@ -1,0 +1,6 @@
+resources:
+  - ./namespace.yml
+  - ./configmaps/soat-backend.yml
+  - ./deployments/soat-backend.yml
+  - ./services/soat-backend.yml
+  - ./hpas/soat-backend.yml

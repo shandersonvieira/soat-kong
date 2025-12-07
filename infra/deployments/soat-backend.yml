@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong-service-backend
+  namespace: kong-service
+  labels:
+    app: kong-service-backend
+    tier: backend
+  annotations:
+    maintainer: "SOAT - Grupo 75"
+    description: "Deployment do backend do gateway Kong"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kong-service-backend
+  template:
+    metadata:
+      labels:
+        app: kong-service-backend
+    spec:
+      containers:
+        - name: kong-service-backend
+          image: kong:3.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000 # proxy
+            - containerPort: 8443 # proxy SSL
+            - containerPort: 8001 # admin API
+            - containerPort: 8444 # admin API SSL
+            - containerPort: 8002 # manager GUI
+            - containerPort: 8445 # manager GUI SSL
+            - containerPort: 8100 # custom port KONG_3_PORT
+            - containerPort: 8101 # custom port KONG_4_PORT
+          env:
+            - name: KONG_DATABASE
+              value: "off"
+            - name: KONG_DECLARATIVE_CONFIG
+              value: "/kong/kong.yml"
+            - name: KONG_LOG_LEVEL
+              value: "info"
+            - name: KONG_PROXY_ACCESS_LOG
+              value: "/dev/stdout"
+            - name: KONG_ADMIN_ACCESS_LOG
+              value: "/dev/stdout"
+            - name: KONG_PROXY_ERROR_LOG
+              value: "/dev/stderr"
+            - name: KONG_ADMIN_ERROR_LOG
+              value: "/dev/stderr"
+            - name: KONG_ADMIN_LISTEN
+              value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
+            - name: KONG_ADMIN_GUI_URL
+              value: "http://localhost:8002"
+          volumeMounts:
+            - name: kong-config-volume
+              mountPath: /kong/kong.yml
+              subPath: kong.yml
+              readOnly: true
+      volumes:
+        - name: kong-config-volume
+          configMap:
+            name: kong-service-backend-config

@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-service-backend
+  namespace: kong-service
+  labels:
+    app: kong-service-backend
+    tier: backend
+  annotations:
+    maintainer: "SOAT - Grupo 75"
+    description: "Expor a API gateway kong do backend via LoadBalancer"
+spec:
+  type: LoadBalancer
+  selector:
+    app: kong-service-backend
+  ports:
+    - name: proxy
+      port: 80
+      targetPort: 8000
+
+    - name: proxy-ssl
+      port: 8443
+      targetPort: 8443
+
+    - name: admin
+      port: 8001
+      targetPort: 8001
+
+    - name: admin-ssl
+      port: 8444
+      targetPort: 8444
+
+    - name: manager
+      port: 8002
+      targetPort: 8002
+
+    - name: manager-ssl
+      port: 8445
+      targetPort: 8445
+
+    - name: custom-1
+      port: 8100
+      targetPort: 8100
+
+    - name: custom-2
+      port: 8101
+      targetPort: 8101
