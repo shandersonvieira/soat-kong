@@ -76,6 +76,3 @@ Para aplicar essa infraestrutura manualmente em um cluster Kubernetes, você pre
     # 4. Verificar o status
     kubectl get pods -n kong-service
     ```
-
----
-**Mantenedor:** SOAT - Grupo 75
