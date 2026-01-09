@@ -1,4 +1,4 @@
-name: Java CI
+name: Kong CI
 
 on:
   push:
