@@ -1,0 +1,56 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - develop
+
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, closed]
+
+  workflow_dispatch:
+
+env:
+  GITHUB_SHA: ${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: |
+          CLUSTER_NAME=$(aws eks list-clusters --region ${{ secrets.AWS_REGION }} --query "clusters[0]" --output text)
+          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name $CLUSTER_NAME
+
+      - name: Install moreutils (for sponge)
+        run: sudo apt install moreutils
+
+      - name: Deploy to Kubernetes
+        env:
+          SOAT_SECRET_KEY: ${{ secrets.SOAT_SECRET_KEY }}
+        run: |
+          export SOAT_SECRET_KEY=${{ env.SOAT_SECRET_KEY }}
+
+          envsubst < infra/configmap/soat-backend.yml | sponge infra/configmap/soat-backend.yml
+
+          kubectl apply -k infra/
+          kubectl rollout status deployment/soat-backend -n soat
