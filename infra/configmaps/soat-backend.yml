@@ -119,5 +119,5 @@ data:
     jwt_secrets:
       - consumer: python-auth
         key: "auth_service"
-        secret: "7e3e182d77f79d2bb4da2fb39a58e56955a57df6d5a41794e5700a6a4119198e"
+        secret: "${SOAT_JWT_SECRET}"
         algorithm: "HS256"
