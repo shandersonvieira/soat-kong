@@ -48,6 +48,8 @@ jobs:
         env:
           SOAT_SECRET_KEY: ${{ secrets.SOAT_SECRET_KEY }}
         run: |
+          ls -la
+          pwd
           export SOAT_SECRET_KEY=${{ env.SOAT_SECRET_KEY }}
 
           envsubst < infra/configmap/soat-backend.yml | sponge infra/configmap/soat-backend.yml
