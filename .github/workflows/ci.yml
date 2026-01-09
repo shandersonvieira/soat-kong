@@ -46,9 +46,9 @@ jobs:
 
       - name: Deploy to Kubernetes
         env:
-          SOAT_SECRET_KEY: ${{ secrets.SOAT_SECRET_KEY }}
+          SOAT_JWT_SECRET: ${{ secrets.SOAT_JWT_SECRET }}
         run: |
-          export SOAT_SECRET_KEY=${{ env.SOAT_SECRET_KEY }}
+          export SOAT_JWT_SECRET=${{ env.SOAT_JWT_SECRET }}
 
           envsubst < infra/configmaps/soat-backend.yml | sponge infra/configmaps/soat-backend.yml
 
