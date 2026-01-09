@@ -53,4 +53,4 @@ jobs:
           envsubst < infra/configmaps/soat-backend.yml | sponge infra/configmaps/soat-backend.yml
 
           kubectl apply -k infra/
-          kubectl rollout status deployment/soat-backend -n kong-service
+          kubectl rollout status deployment/kong-service-backend -n kong-service
